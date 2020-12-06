@@ -18,4 +18,4 @@ BOARD_WIDTH_OFFSET = Resources.tokenSize.x
 BOARD_HEIGHT_OFFSET = Resources.tokenSize.y
 
 NORMAL_FPS = 60
-BOT_FPS = 10
+BOT_FPS = 100000

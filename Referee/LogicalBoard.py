@@ -1,4 +1,5 @@
 import copy
+import random as rnd
 
 from Point import *
 
@@ -30,7 +31,8 @@ class LogicalBoard:
         self.height = height
         self.width = width
         self.board = [[TILE for x in range(width)] for y in range(height)]
-        self.players = [Point((width-1)//2,0),Point(width//2,height-1)]
+        startingX = rnd.randint(0,width)
+        self.players = [Point(startingX,0),Point((width-1-startingX),height-1)]
         self.playerTurn = 0
 
     def copy(self, logicalBoard):
@@ -38,6 +40,7 @@ class LogicalBoard:
         self.width = logicalBoard.width
         self.board = copy.deepcopy(logicalBoard.board)
         self.players = copy.deepcopy(logicalBoard.players)
+        self.initialPlayers = copy.deepcopy(self.initialPlayers)
         self.playerTurn = logicalBoard.playerTurn
 
     def doAction(self,action):
@@ -53,10 +56,21 @@ class LogicalBoard:
         self.board[remove.y][remove.x] = NO_TILE
         self.playerTurn = 1 - self.playerTurn
 
-    def startGame(self,first):
+    def resetGame(self,first):
         self.playerTurn = first
         self.board = [[TILE for x in range(self.width)] for y in range(self.height)]
-        self.players = [Point((self.width-1)//2,0),Point(self.width//2,self.height-1)]
+        self.players = copy.deepcopy(self.initialPlayers)
+
+    def startNewGame(self,first):
+        self.playerTurn = first
+        self.board = [[TILE for x in range(self.width)] for y in range(self.height)]
+        while True:
+            startingX = rnd.randint(0,self.width-1)
+            startingY = rnd.randint(0,self.height-1)
+            if not (startingX == (self.width - 1 - startingX) and startingY == (self.height - 1 - startingY)):
+                break
+        self.players = [Point(startingX,startingY),Point((self.width-1-startingX),self.height-1 - startingY)]
+        self.initialPlayers = copy.deepcopy(self.players)
 
     def isGameDone(self):
         return 0 == len(self.getAvailableMoves(self.playerTurn))
@@ -83,7 +97,7 @@ class LogicalBoard:
             return False
 
     def isValidAction(self, action):
-        return self.isValidMove(self.playerTurn,action.to) and self.isValidRemove(self.playerTurn,action.to,action.remove)
+        return action.to in self.getAvailableMoves(self.playerTurn) and self.isValidRemove(self.playerTurn,action.to,action.remove)
             
 
     def isValidRemove(self, player, to, remove):

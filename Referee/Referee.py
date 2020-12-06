@@ -10,7 +10,8 @@ class Referee:
     def __init__(self,player1, player2, boardHeight, boardWidth, timeLimit):
         self.timeLimit = timeLimit
         self.logicalBoard = LogicalBoard(boardHeight,boardWidth) 
-        self.playerScores = [0,0]
+        self.playerScores = [0,0,0]
+        self.draws = 0
         self.graphicalBoard = GraphicalBoard(self.logicalBoard, self.playerScores)
 
         if player1 is None:
@@ -28,29 +29,41 @@ class Referee:
     def playGame(self,games, first):
         
         for player in self.players:
-            player.send(games)
+            player.send(2*games)
             player.send(player.id)
             player.send(self.logicalBoard.height)
             player.send(self.logicalBoard.width)
             player.send(self.timeLimit)
-
+        
         for round in range(games):
-            winner = self.playRound(round,first)
+            self.logicalBoard.startNewGame(first)
+            #print(self.logicalBoard.boardToString())
+            matchScores = [0,0]
+            for match in range(2):
+                #print("match:",match)
+                self.logicalBoard.resetGame(first)
+                winner = self.playRound(round,first)
 
-            if self.graphicalBoard.terminated == True:
-                break
+                if self.graphicalBoard.terminated == True:
+                    break
 
-            self.playerScores[winner]+=1
-            first = self.nextRoundPlayer(first)
-            
+                matchScores[winner]+=1
+                first = self.nextRoundPlayer(first)
+
+            if matchScores[0]>matchScores[1]:
+                self.playerScores[0]+=1
+            elif matchScores[1]>matchScores[0]:
+                self.playerScores[1]+=1
+            else:
+                self.playerScores[2]+=1
 
         print("Final score:")
         print("Player 0: ",self.playerScores[0])
         print("Player 1: ",self.playerScores[1])
+        print("Draws: ", self.playerScores[2])
 
     def playRound(self,round,first):
         
-        self.logicalBoard.startGame(first)
         self.graphicalBoard.draw()
 
         winner = -1

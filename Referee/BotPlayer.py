@@ -21,7 +21,6 @@ class BotPlayer:
         self.timelimit = timelimit # time limit in ms
 
     def send(self, msg):
-        #print(msg)
         self.playerProcess.stdin.write(bytes(str(msg) + "\n", 'UTF-8'))
         self.playerProcess.stdin.flush()
 
@@ -38,7 +37,7 @@ class BotPlayer:
                     return cast("")
             else:
                 msg = data.decode("utf-8").strip()
-                
+
         return cast(msg)
 
     def finish(self):

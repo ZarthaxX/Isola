@@ -88,24 +88,9 @@ class GraphicalBoard:
         #for move in availableMoves:
         #    point = self.toVisualPoint(move)
         #    self.screen.blit(self.moveableCell,point)
-    
-        playerTurn = "red" if self.logicalBoard.playerTurn == 0 else "blue"
-        playerTurnColor = RED if self.logicalBoard.playerTurn == 0 else BLUE
-        playerTurnText = self.font.render(f"Player {playerTurn}'s turn", False, playerTurnColor)
-        player1ScoreText = self.font.render(f"W {self.playerScores[0]}", False, RED)
-        player2ScoreText = self.font.render(f"W {self.playerScores[1]}", False, BLUE)
-        player1Location = self.toVisualPoint(Point(-1,(self.logicalBoard.height-1)//2))
-        player2Location = self.toVisualPoint(Point(self.logicalBoard.width,(self.logicalBoard.height-1)//2))
-        player1TextLocation = self.toVisualPoint(Point(-1,(self.logicalBoard.height-1)//2+1))
-        player2TextLocation = self.toVisualPoint(Point(self.logicalBoard.width,(self.logicalBoard.height-1)//2+1))
-        self.screen.blit(self.players[0],player1Location)
-        self.screen.blit(self.players[1],player2Location)
-        self.screen.blit(player1ScoreText,(player1TextLocation[0]+(Resources.tokenSize.x-player1ScoreText.get_rect().width)//2,player1TextLocation[1]))
-        self.screen.blit(player2ScoreText,(player2TextLocation[0]+(Resources.tokenSize.x-player2ScoreText.get_rect().width)//2,player2TextLocation[1]))
-        boardWidth = self.toVisualPoint(Point(self.logicalBoard.width,self.logicalBoard.height))[0] - self.toVisualPoint(Point(0,0))[0]
-        playerTurnLocation = (self.toVisualPoint(Point(0,0))[0] + (boardWidth - playerTurnText.get_rect().width) // 2,
-                              (self.boardLocation.y - playerTurnText.get_rect().height)//2)
-        self.screen.blit(playerTurnText,playerTurnLocation)
+
+        self.drawTexts()
+
         pygame.display.update()
         self.clock.tick(self.FPS)
 
@@ -113,6 +98,7 @@ class GraphicalBoard:
             if event.type == pygame.MOUSEBUTTONUP:
                 None   
     
+
     def animateAction(self, action):
   
         self.FPS = BOT_FPS
@@ -143,3 +129,28 @@ class GraphicalBoard:
     def exit(self):
         pygame.quit()
         self.terminated = True
+    
+    def drawTexts(self): 
+        playerTurn = "red" if self.logicalBoard.playerTurn == 0 else "blue"
+        playerTurnColor = RED if self.logicalBoard.playerTurn == 0 else BLUE
+        playerTurnText = self.font.render(f"Player {playerTurn}'s turn", False, playerTurnColor)
+        player1ScoreText = self.font.render(f"W {self.playerScores[0]}", False, RED)
+        player2ScoreText = self.font.render(f"W {self.playerScores[1]}", False, BLUE)
+        player1Location = self.toVisualPoint(Point(-1,(self.logicalBoard.height-1)//2))
+        player2Location = self.toVisualPoint(Point(self.logicalBoard.width,(self.logicalBoard.height-1)//2))
+        player1TextLocation = self.toVisualPoint(Point(-1,(self.logicalBoard.height-1)//2+1))
+        player2TextLocation = self.toVisualPoint(Point(self.logicalBoard.width,(self.logicalBoard.height-1)//2+1))
+        self.screen.blit(self.players[0],player1Location)
+        self.screen.blit(self.players[1],player2Location)
+        self.screen.blit(player1ScoreText,(player1TextLocation[0]+(Resources.tokenSize.x-player1ScoreText.get_rect().width)//2,player1TextLocation[1]))
+        self.screen.blit(player2ScoreText,(player2TextLocation[0]+(Resources.tokenSize.x-player2ScoreText.get_rect().width)//2,player2TextLocation[1]))
+        boardWidth = self.toVisualPoint(Point(self.logicalBoard.width,self.logicalBoard.height))[0] - self.toVisualPoint(Point(0,0))[0]
+        playerTurnLocation = (self.toVisualPoint(Point(0,0))[0] + (boardWidth - playerTurnText.get_rect().width) // 2,
+                              (self.boardLocation.y - playerTurnText.get_rect().height)//2)
+        
+        playerDrawsText = self.font.render(f"Draws {self.playerScores[2]}", False, BROWN)
+        bottomBorderH = self.toVisualPoint(Point(self.logicalBoard.width+1,self.logicalBoard.height+1))[1] - self.toVisualPoint(Point(self.logicalBoard.width,self.logicalBoard.height))[1]
+        playerDrawsLocation = (self.toVisualPoint(Point(0,0))[0] + (boardWidth - playerDrawsText.get_rect().width) // 2,
+                              (self.toVisualPoint(Point(0,self.logicalBoard.height))[1]) + (bottomBorderH - playerDrawsText.get_rect().height) // 2)
+        self.screen.blit(playerTurnText,playerTurnLocation)
+        self.screen.blit(playerDrawsText,playerDrawsLocation)
